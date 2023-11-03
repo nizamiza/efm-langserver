@@ -1,0 +1,76 @@
+version: 2
+root-markers:
+  - .git/
+lint-debounce: 1s
+log-file: /Users/niza/.config/efm-langserver/output.log
+log-level: 1
+tools:
+  lua-lua-format: &lua-lua-format
+    format-command: 'lua-format -i'
+    format-stdin: true
+
+  css-prettier: &css-prettier
+    format-command: 'prettier --parser css'
+
+  ts-prettier: &ts-prettier
+    format-command: 'prettier --parser typescript'
+
+  yaml-prettier: &yaml-prettier
+    format-command: 'prettier --parser yaml'
+
+  json-prettier: &json-prettier
+    format-command: 'prettier --parser json'
+
+  html-prettier: &html-prettier
+    format-command: 'prettier --parser html'
+
+  md-prettier: &md-prettier
+    format-command: 'prettier --parser markdown'
+
+  ts-eslint: &ts-eslint
+    lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
+    lint-ignore-exit-code: true
+    lint-stdin: true
+    lint-formats:
+      - "%f(%l,%c): %tarning %m"
+      - "%f(%l,%c): %trror %m"
+
+  json-fixjson: &json-fixjson
+    format-command: 'fixjson'
+
+  json-jq: &json-jq
+    lint-command: 'jq .'
+
+  md-markdownlint: &md-markdownlint
+    lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l %m'
+      - '%f:%l:%c %m'
+      - '%f: %l: %m'
+
+  md-pandoc: &md-pandoc
+    format-command: 'pandoc -f markdown -t gfm -sp --tab-stop=2'
+languages:
+  css:
+    - <<: *css-prettier
+  html:
+    - <<: *html-prettier
+  javascript:
+    - <<: *ts-eslint
+    - <<: *ts-prettier
+  typescript:
+    - <<: *ts-eslint
+    - <<: *ts-prettier
+  json:
+    - <<: *json-fixjson
+    - <<: *json-jq
+    - <<: *json-prettier
+  lua:
+    - <<: *lua-lua-format
+  markdown:
+    - <<: *md-markdownlint
+    - <<: *md-pandoc
+    - <<: *md-prettier
+  yaml:
+    - <<: *yaml-prettier
