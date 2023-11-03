@@ -10,22 +10,22 @@ tools:
     format-stdin: true
 
   css-prettier: &css-prettier
-    format-command: 'prettier --parser css'
+    format-command: 'npx --no-install prettier --parser css'
 
   ts-prettier: &ts-prettier
-    format-command: 'prettier --parser typescript'
+    format-command: 'npx --no-install prettier --parser typescript'
 
   yaml-prettier: &yaml-prettier
-    format-command: 'prettier --parser yaml'
+    format-command: 'npx --no-install prettier --parser yaml'
 
   json-prettier: &json-prettier
-    format-command: 'prettier --parser json'
+    format-command: 'npx --no-install prettier --parser json'
 
   html-prettier: &html-prettier
-    format-command: 'prettier --parser html'
+    format-command: 'npx --no-install prettier --parser html'
 
   md-prettier: &md-prettier
-    format-command: 'prettier --parser markdown'
+    format-command: 'npx --no-install prettier --parser markdown'
 
   ts-eslint: &ts-eslint
     lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
