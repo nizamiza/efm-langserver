@@ -1,31 +1,28 @@
 version: 2
 root-markers:
   - .git/
-lint-debounce: 1s
-log-file: /Users/niza/.config/efm-langserver/output.log
-log-level: 1
+lint-debounce: 0.5s
+format-debounce: 0.25s
 tools:
   lua-lua-format: &lua-lua-format
     format-command: 'lua-format -i'
     format-stdin: true
 
-  css-prettier: &css-prettier
-    format-command: 'npx --no-install prettier --parser css'
-
-  ts-prettier: &ts-prettier
-    format-command: 'npx --no-install prettier --parser typescript'
-
-  yaml-prettier: &yaml-prettier
-    format-command: 'npx --no-install prettier --parser yaml'
-
-  json-prettier: &json-prettier
-    format-command: 'npx --no-install prettier --parser json'
-
-  html-prettier: &html-prettier
-    format-command: 'npx --no-install prettier --parser html'
-
-  md-prettier: &md-prettier
-    format-command: 'npx --no-install prettier --parser markdown'
+  prettierd: &prettier
+    format-command: >
+      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
+        ${--tab-width=tabSize}
+    format-stdin: true
+    root-markers:
+      - .prettierrc
+      - .prettierrc.json
+      - .prettierrc.js
+      - .prettierrc.yml
+      - .prettierrc.yaml
+      - .prettierrc.json5
+      - .prettierrc.mjs
+      - .prettierrc.cjs
+      - .prettierrc.toml
 
   ts-eslint: &ts-eslint
     lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
@@ -37,9 +34,6 @@ tools:
 
   json-fixjson: &json-fixjson
     format-command: 'fixjson'
-
-  json-jq: &json-jq
-    lint-command: 'jq .'
 
   md-markdownlint: &md-markdownlint
     lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
@@ -75,27 +69,26 @@ tools:
       - cspell.yml
 languages:
   css:
-    - <<: *css-prettier
+    - <<: *prettier
   html:
-    - <<: *html-prettier
+    - <<: *prettier
   javascript:
     - <<: *ts-eslint
-    - <<: *ts-prettier
+    - <<: *prettier
   typescript:
     - <<: *ts-eslint
-    - <<: *ts-prettier
+    - <<: *prettier
   json:
     - <<: *json-fixjson
-    - <<: *json-jq
-    - <<: *json-prettier
+    - <<: *prettier
   lua:
     - <<: *lua-lua-format
   markdown:
     - <<: *md-markdownlint
     - <<: *md-pandoc
-    - <<: *md-prettier
+    - <<: *prettier
   yaml:
-    - <<: *yaml-prettier
+    - <<: *prettier
     - <<: *cspell-lint
   =:
     - <<: *cspell-lint
