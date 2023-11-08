@@ -5,7 +5,7 @@ lint-debounce: 0.5s
 format-debounce: 0.25s
 tools:
   lua-lua-format: &lua-lua-format
-    format-command: 'lua-format -i'
+    format-command: "lua-format -i"
     format-stdin: true
 
   prettierd: &prettier
@@ -25,35 +25,32 @@ tools:
       - .prettierrc.toml
 
   ts-eslint: &ts-eslint
-    lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
+    lint-command: "eslint -f visualstudio --stdin --stdin-filename ${INPUT}"
     lint-ignore-exit-code: true
     lint-stdin: true
     lint-formats:
       - "%f(%l,%c): %tarning %m"
       - "%f(%l,%c): %trror %m"
 
-  json-fixjson: &json-fixjson
-    format-command: 'fixjson'
-
   md-markdownlint: &md-markdownlint
     lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
     lint-stdin: true
     lint-formats:
-      - '%f:%l %m'
-      - '%f:%l:%c %m'
-      - '%f: %l: %m'
+      - "%f:%l %m"
+      - "%f:%l:%c %m"
+      - "%f: %l: %m"
 
   md-pandoc: &md-pandoc
-    format-command: 'pandoc -f markdown -t gfm -sp --tab-stop=2'
+    format-command: "pandoc -f markdown -t gfm -sp --tab-stop=2"
 
   cspell-lint: &cspell-lint
     prefix: cspell
     lint-severity: 4
-    lint-command: 'npx --no-install cspell lint --no-progress --no-summary --no-color ${INPUT}'
+    lint-command: "npx --no-install cspell lint --no-progress --no-summary --no-color ${INPUT}"
     lint-stdin: true
     lint-formats:
-      - '%f:%l:%c - %m'
-      - '%f:%l:%c %m'
+      - "%f:%l:%c - %m"
+      - "%f:%l:%c %m"
     root-markers:
       - package.json
       - .cspell.json
@@ -79,7 +76,6 @@ languages:
     - <<: *ts-eslint
     - <<: *prettier
   json:
-    - <<: *json-fixjson
     - <<: *prettier
   lua:
     - <<: *lua-lua-format
