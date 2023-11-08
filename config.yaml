@@ -1,10 +1,11 @@
+---
 version: 2
 root-markers:
   - .git/
 lint-debounce: 0.5s
 format-debounce: 0.25s
 tools:
-  lua-lua-format: &lua-lua-format
+  lua-format: &lua-format
     format-command: "lua-format -i"
     format-stdin: true
 
@@ -24,15 +25,36 @@ tools:
       - .prettierrc.cjs
       - .prettierrc.toml
 
-  ts-eslint: &ts-eslint
-    lint-command: "eslint -f visualstudio --stdin --stdin-filename ${INPUT}"
+  eslint: &eslint
+    prefix: eslint
+    lint-command: "npx --no-install eslint -f unix --stdin --stdin-filename ${INPUT}"
     lint-ignore-exit-code: true
     lint-stdin: true
-    lint-formats:
-      - "%f(%l,%c): %tarning %m"
-      - "%f(%l,%c): %trror %m"
+    root-markers:
+      - package.json
+      - .eslintrc.js
+      - .eslintrc.yaml
+      - .eslintrc.yml
+      - .eslintrc.json
+    commands:
+      - title: "eslint fix"
+        command: npx
+        arguments:
+          - "--no-install"
+          - "eslint"
+          - "--fix"
+          - "${INPUT}"
 
-  md-markdownlint: &md-markdownlint
+  yamllint: &yamllint
+    prefix: yamllint
+    lint-command: "yamllint --strict --format parsable ${INPUT}"
+    lint-stdin: true
+    lint-formats:
+      - "%f:%l:%c: [%t%*[a-z]] %m"
+    env:
+      - "PYTHONIOENCODING=UTF-8"
+
+  markdownlint: &markdownlint
     lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
     lint-stdin: true
     lint-formats:
@@ -40,10 +62,10 @@ tools:
       - "%f:%l:%c %m"
       - "%f: %l: %m"
 
-  md-pandoc: &md-pandoc
+  pandoc: &pandoc
     format-command: "pandoc -f markdown -t gfm -sp --tab-stop=2"
 
-  cspell-lint: &cspell-lint
+  cspell: &cspell
     prefix: cspell
     lint-severity: 4
     lint-command: "npx --no-install cspell lint --no-progress --no-summary --no-color ${INPUT}"
@@ -70,21 +92,21 @@ languages:
   html:
     - <<: *prettier
   javascript:
-    - <<: *ts-eslint
+    - <<: *eslint
     - <<: *prettier
   typescript:
-    - <<: *ts-eslint
+    - <<: *eslint
     - <<: *prettier
   json:
     - <<: *prettier
   lua:
-    - <<: *lua-lua-format
+    - <<: *lua-format
   markdown:
-    - <<: *md-markdownlint
-    - <<: *md-pandoc
+    - <<: *markdownlint
+    - <<: *pandoc
     - <<: *prettier
   yaml:
+    - <<: *yamllint
     - <<: *prettier
-    - <<: *cspell-lint
   =:
-    - <<: *cspell-lint
+    - <<: *cspell
